@@ -4,6 +4,7 @@ Programa de consola .NET Core en C#, que lee un fichero .csv almacenado en una c
 # Origen de datos
 - El fichero .csv está disponible en https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV
 - Esta separado por ;
+- El archivo pesa 637 MB
 
 # Entidad Stock
 | PointOfSale | Product | Date | Stock |
