@@ -26,6 +26,7 @@ namespace CsvImporter.Core.Services.Movement
         public async Task Clear()
         {
             await _db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [StockMovements]");
+            await _db.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT('StockMovements', RESEED, 1)");
         }
     }
 }
