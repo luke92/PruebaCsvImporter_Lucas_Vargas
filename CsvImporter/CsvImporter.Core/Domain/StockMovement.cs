@@ -1,10 +1,11 @@
-﻿using System;
+﻿using CsvHelper.Configuration.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CsvImporter.Core.Domain
 {
-    public class StockMovement
+    public class StockMovement : BaseDomain
     {
         public int PointOfSale { get; set; }
         public string Product { get; set; }
