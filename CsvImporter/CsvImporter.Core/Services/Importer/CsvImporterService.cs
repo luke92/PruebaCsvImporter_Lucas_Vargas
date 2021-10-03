@@ -7,12 +7,21 @@ using System.Collections.Generic;
 using CsvImporter.Core.Domain;
 using CsvHelper.Configuration;
 using CsvImporter.Core.Mapping;
+using CsvImporter.Core.Services.Movement;
+using System.Threading.Tasks;
 
 namespace CsvImporter.Core.Services.Importer
 {
     public class CsvImporterService : IImporterService
     {
-        public void Read<Entity,EntityMap>(string filePath, string delimiter = null) where Entity : BaseDomain where EntityMap : ClassMap
+        private readonly IMovementService _movementService;
+
+        public CsvImporterService(IMovementService movementService)
+        {
+            _movementService = movementService;
+        }
+
+        public async Task ImportStock(string filePath, string delimiter = null)
         {
             using (var reader = new StreamReader(filePath))
             {
@@ -28,12 +37,14 @@ namespace CsvImporter.Core.Services.Importer
 
                 using (var csv = new CsvReader(reader, config))
                 {
-                    csv.Context.RegisterClassMap<EntityMap>();
+                    csv.Context.RegisterClassMap<StockMovementRowMap>();
                     csv.Read();
                     csv.ReadHeader();
+                    await _movementService.Clear();
                     while (csv.Read())
                     {
-                        var record = csv.GetRecord<Entity>();
+                        var record = csv.GetRecord<StockMovement>();
+                        await _movementService.Save(record);
                     }
                 }
             }

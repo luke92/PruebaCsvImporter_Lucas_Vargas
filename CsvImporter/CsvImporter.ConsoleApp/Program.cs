@@ -2,45 +2,48 @@
 using CsvImporter.Core.Domain;
 using CsvImporter.Core.Mapping;
 using CsvImporter.Core.Services.Importer;
+using CsvImporter.Core.Services.Movement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace CsvImporter.ConsoleApp
 {
     class Program
     {
-        static void Main(string[] args)
+        public async static Task Main(string[] args)
         {
-            IConfiguration Config = new ConfigurationBuilder()
+            var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
 
             var collection = new ServiceCollection();
 
-            collection.AddScoped<IImporterService, CsvImporterService>();
-
-            var connectionString = Config.GetSection("connectionString").Value;
+            var connectionString = configuration.GetSection("connectionString").Value;
             collection.AddDbContext<StockContext>(options =>
             {
                 options.UseSqlServer(connectionString);
             });
 
-            IServiceProvider serviceProvider = collection.BuildServiceProvider();
-            var sample1Service = serviceProvider.GetService<IImporterService>();
+            collection.AddScoped<IMovementService, MovementService>();
+            collection.AddScoped<IImporterService, CsvImporterService>();
+
+            var serviceProvider = collection.BuildServiceProvider();
+            
+            Console.WriteLine("Start importing");
+
+            var dataSource = configuration.GetSection("dataSource").Value;
+            var importerService = serviceProvider.GetService<IImporterService>();
+            await importerService.ImportStock(dataSource);
+
+            Console.WriteLine("End importing");
+
             if (serviceProvider is IDisposable)
             {
                 ((IDisposable)serviceProvider).Dispose();
             }
-
-            Console.WriteLine("Start importing");
-            var service = new CsvImporterService();
-
-            var dataSource = Config.GetSection("dataSource").Value;
-
-            service.Read<StockMovement,StockMovementRowMap>(dataSource);
-            Console.WriteLine("End importing");
         }
     }
 }
