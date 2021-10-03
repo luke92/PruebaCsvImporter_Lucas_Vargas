@@ -6,5 +6,6 @@ namespace CsvImporter.Core.Services.Movement
 {
     public interface IMovementService
     {
+
     }
 }
