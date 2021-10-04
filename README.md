@@ -1,12 +1,24 @@
 # PruebaCsvImporter_Lucas_Vargas
-Programa de consola .NET Core en C#, que lee un fichero .csv almacenado en una cuenta de almacenamiento de Azure e inserta su contenido en una BD SQL Server local.
+NET Core console program in C#, which reads a .csv file stored in an Azure storage account and inserts its content in a local SQL Server database.
 
 # Data Source
-- El fichero .csv está disponible en https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV
-- Esta separado por ;
-- El archivo pesa 637 MB
+- The .csv file is available at https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV
+- It is separated by `;`
+- The file has a size of 637 MB
+- Approximate number of records: 1048576
 
-# Entidad Stock
+# Performance and statistics
+- Approximate time to import the complete file: 72hs
+- CPU Usage: 33%
+- Memory Usage: 40MB
+- Maximum number of records inserted per sencond: 252
+- Minimum number of records inserted per second: 1
+- Average number of records inserted per second: 6
+- During the first 5 minutes the number of records that are inserted per second are between 252 and 20
+- At minute 10 the amount drops between 10 and 20
+- Then it starts to go down until it reaches 4 records per second
+
+# Stock Entity
 | PointOfSale | Product | Date | Stock |
 |--|--|--|--|
 | Integer | String | DateTime | Integer
