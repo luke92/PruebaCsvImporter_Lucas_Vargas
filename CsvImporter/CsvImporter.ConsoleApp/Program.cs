@@ -6,6 +6,8 @@ using CsvImporter.Core.Services.Movement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
 using System;
 using System.Threading.Tasks;
 
@@ -27,18 +29,19 @@ namespace CsvImporter.ConsoleApp
                 options.UseSqlServer(connectionString);
             });
 
+            collection.AddLogging(configure =>
+            {
+                configure.AddConfiguration(configuration.GetSection("Logging"));
+                configure.AddConsole();
+            }); 
             collection.AddScoped<IMovementService, MovementService>();
             collection.AddScoped<IImporterService, CsvImporterService>();
 
             var serviceProvider = collection.BuildServiceProvider();
-            
-            Console.WriteLine("Start importing");
-
+           
             var dataSource = configuration.GetSection("dataSource").Value;
             var importerService = serviceProvider.GetService<IImporterService>();
             await importerService.ImportStock(dataSource);
-
-            Console.WriteLine("End importing");
 
             if (serviceProvider is IDisposable)
             {

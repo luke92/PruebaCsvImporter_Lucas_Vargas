@@ -9,20 +9,25 @@ using CsvHelper.Configuration;
 using CsvImporter.Core.Mapping;
 using CsvImporter.Core.Services.Movement;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace CsvImporter.Core.Services.Importer
 {
     public class CsvImporterService : IImporterService
     {
         private readonly IMovementService _movementService;
+        private readonly ILogger _logger;
 
-        public CsvImporterService(IMovementService movementService)
+        public CsvImporterService(IMovementService movementService, ILogger<CsvImporterService> logger)
         {
             _movementService = movementService;
+            _logger = logger;
         }
 
         public async Task ImportStock(string filePath, string delimiter = null)
         {
+            _logger.LogInformation($"Start importing at {DateTime.Now}");
             using (var reader = new StreamReader(filePath))
             {
                 if(delimiter == null)
@@ -48,6 +53,7 @@ namespace CsvImporter.Core.Services.Importer
                     }
                 }
             }
+            _logger.LogInformation($"Finalize importing at {DateTime.Now}");
         }
 
         private string DetectDelimiter(StreamReader reader)
