@@ -9,6 +9,6 @@ namespace CsvImporter.Core.Services.Importer
 {
     public interface IImporterService
     {
-        Task ImportStock(string filePath, string delimiter = null);
+        Task ImportStockAsync(string filePath, string delimiter = null);
     }
 }

@@ -25,35 +25,48 @@ namespace CsvImporter.Core.Services.Importer
             _logger = logger;
         }
 
-        public async Task ImportStock(string filePath, string delimiter = null)
-        {
-            _logger.LogInformation($"Start importing at {DateTime.Now}");
-            using (var reader = new StreamReader(filePath))
+        public async Task ImportStockAsync(string filePath, string delimiter = null)
+        {            
+            var reader = new StreamReader(filePath);
+            if (reader == null) 
             {
-                if(delimiter == null)
-                    delimiter = DetectDelimiter(reader);
+                _logger.LogError($"File {filePath} doesn't exists");
+                return;
+            } 
 
-                var config = new CsvConfiguration(CultureInfo.CurrentCulture) 
-                { 
-                    Delimiter = delimiter, 
-                    Encoding = Encoding.UTF8,
-                    HasHeaderRecord = true                    
-                };
+            if (delimiter == null)
+                delimiter = DetectDelimiter(reader);
 
-                using (var csv = new CsvReader(reader, config))
-                {
-                    csv.Context.RegisterClassMap<StockMovementRowMap>();
-                    csv.Read();
-                    csv.ReadHeader();
-                    await _movementService.Clear();
-                    while (csv.Read())
-                    {
-                        var record = csv.GetRecord<StockMovement>();
-                        await _movementService.Save(record);
-                    }
-                }
+            var config = new CsvConfiguration(CultureInfo.CurrentCulture)
+            {
+                Delimiter = delimiter,
+                Encoding = Encoding.UTF8,
+                HasHeaderRecord = true
+            };
+
+            if(config == null)
+            {
+                _logger.LogError($"Error initializing Configuration for CSVREADER");
+                return;
             }
-            _logger.LogInformation($"Finalize importing at {DateTime.Now}");
+            
+            var csv = new CsvReader(reader, config);
+            if (csv == null)
+            {
+                _logger.LogError($"Error initializing CsvReader");
+                return;
+            }
+
+            csv.Context.RegisterClassMap<StockMovementRowMap>();
+            csv.Read();
+            csv.ReadHeader();
+            await _movementService.Clear();
+            while (csv.Read())
+            {
+                var record = csv.GetRecord<StockMovement>();
+                _movementService.Add(record);
+            }
+            await _movementService.SaveChangesAsync();            
         }
 
         private string DetectDelimiter(StreamReader reader)

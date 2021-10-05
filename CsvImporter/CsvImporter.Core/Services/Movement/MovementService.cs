@@ -17,9 +17,19 @@ namespace CsvImporter.Core.Services.Movement
             _db = db;
         }
 
-        public async Task Save(StockMovement stockMovement)
+        public void Add(StockMovement stockMovement)
         {
             _db.StockMovements.Add(stockMovement);
+        }
+
+        public async Task SaveAsync(StockMovement stockMovement)
+        {
+            Add(stockMovement);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task SaveChangesAsync()
+        {
             await _db.SaveChangesAsync();
         }
 

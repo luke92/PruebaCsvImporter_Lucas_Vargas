@@ -17,36 +17,9 @@ namespace CsvImporter.ConsoleApp
     {
         public async static Task Main(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            var collection = new ServiceCollection();
-
-            var connectionString = configuration.GetSection("connectionString").Value;
-            collection.AddDbContext<StockContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-            });
-
-            collection.AddLogging(configure =>
-            {
-                configure.AddConfiguration(configuration.GetSection("Logging"));
-                configure.AddConsole();
-            }); 
-            collection.AddScoped<IMovementService, MovementService>();
-            collection.AddScoped<IImporterService, CsvImporterService>();
-
-            var serviceProvider = collection.BuildServiceProvider();
-           
-            var dataSource = configuration.GetSection("dataSource").Value;
-            var importerService = serviceProvider.GetService<IImporterService>();
-            await importerService.ImportStock(dataSource);
-
-            if (serviceProvider is IDisposable)
-            {
-                ((IDisposable)serviceProvider).Dispose();
-            }
+            var services = Startup.ConfigureServices();
+            var serviceProvider = services.BuildServiceProvider();
+            await serviceProvider.GetService<EntryPoint>().RunAsync(args);
         }
     }
 }
