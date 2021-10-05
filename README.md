@@ -14,17 +14,22 @@ NET Core console program in C#, which reads a .csv file stored in an Azure stora
 - Configure your **appsettings.json** located in **CsvImporter.ConsoleApp**
 	- **connectionString** : Connection String of your database
 	- **dataSource** : Path of **Stock.CSV**
-- Use Package Manager Console Located in **CsvImporter.Core** and Run `Update-Database`
+- Set as StartUp Project and Use Package Manager Console Located in **CsvImporter.Core** and Run `Update-Database`
 - Run **CsvImporter.ConsoleApp**
 
 # Stock Entity
 | PointOfSale | Product | Date | Stock |
 |--|--|--|--|
-| Integer | String | DateTime | Integer
+| String | String | DateTime | Integer
 
 # Performance and statistics in Debug
 
 ## Using Entity Framework Core
+
+### Save 100000 records in one transaction (BulkInsert)
+- Repo: https://github.com/borisdj/EFCore.BulkExtensions
+- CPU Usage: Program -> 20% | SQLSERVER -> 15%
+
 
 ### Save 10000 records in one transaction (Add Range)
 - CPU Usage: 25%

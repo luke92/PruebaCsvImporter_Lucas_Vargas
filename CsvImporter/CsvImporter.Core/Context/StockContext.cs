@@ -1,4 +1,5 @@
 ﻿using CsvImporter.Core.Domain;
+using CsvImporter.Core.Mapping;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace CsvImporter.Core.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new StockMovementMap());
         }
 
         public virtual DbSet<StockMovement> StockMovements { get; set; }

@@ -20,7 +20,10 @@ namespace CsvImporter.Core.Services.Movement
 
         public async Task SaveAsync(IList<StockMovement> stockMovements)
         {
-            await _db.BulkInsertAsync(stockMovements);
+            await _db.BulkInsertAsync(stockMovements, new BulkConfig
+            {
+                BatchSize = 100000 
+            });
         }
 
         public async Task SaveAsync(StockMovement stockMovement)

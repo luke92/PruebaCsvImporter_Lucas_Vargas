@@ -13,11 +13,11 @@ namespace CsvImporter.Core.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PointOfSale = table.Column<int>(type: "int", nullable: false),
-                    Product = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PointOfSale = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Product = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime", nullable: false),
                     Stock = table.Column<short>(type: "smallint", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
