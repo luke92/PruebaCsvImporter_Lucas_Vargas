@@ -61,12 +61,18 @@ namespace CsvImporter.Core.Services.Importer
             csv.Read();
             csv.ReadHeader();
             await _movementService.Clear();
+
+            var listRecords = new List<StockMovement>();
             while (csv.Read())
             {
-                var record = csv.GetRecord<StockMovement>();
-                _movementService.Add(record);
+                listRecords.Add(csv.GetRecord<StockMovement>());
+                if(listRecords.Count == 10000)
+                {
+                    await _movementService.SaveAsync(listRecords);
+                    listRecords.Clear();
+                }
             }
-            await _movementService.SaveChangesAsync();            
+            await _movementService.SaveAsync(listRecords);            
         }
 
         private string DetectDelimiter(StreamReader reader)

@@ -8,9 +8,8 @@ namespace CsvImporter.Core.Services.Movement
 {
     public interface IMovementService
     {
-        void Add(StockMovement stockMovement);
         Task SaveAsync(StockMovement stockMovement);
-        Task SaveChangesAsync();
+        Task SaveAsync(IList<StockMovement> stockMovements);
         Task Clear();
     }
 }
