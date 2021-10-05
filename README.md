@@ -26,7 +26,7 @@ NET Core console program in C#, which reads a .csv file stored in an Azure stora
 
 ## Using Entity Framework Core
 
-### Save 10000 records in one transaction
+### Save 10000 records in one transaction (Add Range)
 - CPU Usage: 25%
 - Memory Usage: 900MB (Start in 100MB, 900MB with 1740000 records)
 - Average number of records inserted per second: 500
