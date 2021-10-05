@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System;
 using Microsoft.Extensions.Configuration;
+using CsvImporter.Core.Services.FileManager;
 
 namespace CsvImporter.Core.Services.Importer
 {
@@ -19,12 +20,14 @@ namespace CsvImporter.Core.Services.Importer
     {
         private readonly IMovementService _movementService;
         private readonly ILogger _logger;
+        private readonly IFileManagerService _fileManagerService;
         private readonly int _batchSize = 100000;
 
-        public CsvImporterService(IMovementService movementService, ILogger<CsvImporterService> logger, IConfiguration configuration)
+        public CsvImporterService(IMovementService movementService, ILogger<CsvImporterService> logger, IConfiguration configuration, IFileManagerService fileManagerService)
         {
             _movementService = movementService;
             _logger = logger;
+            _fileManagerService = fileManagerService;
 
             if(configuration != null)
             {
@@ -32,75 +35,73 @@ namespace CsvImporter.Core.Services.Importer
             }
         }
 
-        public async Task ImportStockAsync(string filePath, string delimiter = null)
-        {            
-            var reader = new StreamReader(filePath);
+        public async Task ImportStockAsync(string filePath, bool hasHeaderRecord = true)
+        {
+            var reader = _fileManagerService.StreamReader(filePath);
             if (reader == null) 
             {
                 _logger.LogError($"File {filePath} doesn't exists");
                 return;
-            } 
-
-            if (delimiter == null)
-                delimiter = DetectDelimiter(reader);
+            }
 
             var config = new CsvConfiguration(CultureInfo.CurrentCulture)
             {
-                Delimiter = delimiter,
                 Encoding = Encoding.UTF8,
-                HasHeaderRecord = true
+                HasHeaderRecord = hasHeaderRecord,
+                DetectDelimiter = true
             };
-
-            if(config == null)
-            {
-                _logger.LogError($"Error initializing Configuration for CSVREADER");
-                return;
-            }
             
             var csv = new CsvReader(reader, config);
-            if (csv == null)
-            {
-                _logger.LogError($"Error initializing CsvReader");
-                return;
-            }
-
             csv.Context.RegisterClassMap<StockMovementRowMap>();
-            csv.Read();
-            csv.ReadHeader();
+            
+            if (hasHeaderRecord && !Helpers.CSV.CSVHelper.CanReadHeader(csv))
+            {
+                _logger.LogError($"File {filePath} doesn't have content");
+                return;                
+            }
+            
             await _movementService.Clear();
 
             var listRecords = new List<StockMovement>();
-            
+            var recordsImported = (long)0;
+            var recordsNotImported = (long)0;
+
             while (csv.Read())
             {
-                listRecords.Add(csv.GetRecord<StockMovement>());
-                if(listRecords.Count == _batchSize)
+                try
                 {
-                    await _movementService.SaveAsync(listRecords, _batchSize);
-                    listRecords.Clear();
+                    var record = csv.GetRecord<StockMovement>();
+                    listRecords.Add(record);
                 }
+                catch(Exception ex)
+                {
+                    recordsNotImported++;
+                    _logger.LogError($"Cannot convert record", ex);
+                }
+
+                if (listRecords.Count == _batchSize)
+                {
+                    recordsImported += await SaveRecords(listRecords);
+                }                
             }
-            await _movementService.SaveAsync(listRecords);            
+
+            recordsImported += await SaveRecords(listRecords);
+
+            LogResults(recordsImported, recordsNotImported);
         }
 
-        private string DetectDelimiter(StreamReader reader)
+        private async Task<long> SaveRecords(IList<StockMovement> listRecords)
         {
-            var possibleDelimiters = new List<string> { ",", ";", "\t", "|" };
+            await _movementService.SaveAsync(listRecords, _batchSize);
+            var recordsImported = listRecords.Count;
+            listRecords.Clear();
+            return recordsImported;
+        }
 
-            var headerLine = reader.ReadLine();
-
-            reader.BaseStream.Position = 0;
-            reader.DiscardBufferedData();
-
-            foreach (var possibleDelimiter in possibleDelimiters)
-            {
-                if (headerLine.Contains(possibleDelimiter))
-                {
-                    return possibleDelimiter;
-                }
-            }
-
-            return possibleDelimiters[0];
+        private void LogResults(long recordsImported, long recordsCannotImported)
+        {
+            _logger.LogInformation($"Records Imported: {recordsImported}");
+            _logger.LogInformation($"Records Not Imported: {recordsCannotImported}");
         }
     }
 }

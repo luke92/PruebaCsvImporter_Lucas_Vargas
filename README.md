@@ -5,7 +5,7 @@ NET Core console program in C#, which reads a .csv file stored in an Azure stora
 - The .csv file is available at https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV
 - It is separated by `;`
 - The file has a size of 637 MB
-- Number of records: 17174247
+- Number of records: 17175295
 
 # Requirements
 - Net Core 3.1 : https://dotnet.microsoft.com/download/dotnet/3.1
@@ -29,7 +29,7 @@ NET Core console program in C#, which reads a .csv file stored in an Azure stora
 
 | Method | CPU Usage | Memory Usage | Average # Records Inserted per second | Time Elapsed
 |--|--|--|--|--|
-| BulkInsert (SUPER FAST) | 20% | 82MB | 40891 | 7 Minutes
+| BulkInsert (SUPER FAST) | 20% | 82MB | 40891 | 5 Minutes
 | Add Range | 25% | 1GB | 500 | -
 | Add (ULTRA SLOW) | 33% | 40MB | 6 | -
 

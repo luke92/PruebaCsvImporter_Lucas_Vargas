@@ -1,4 +1,5 @@
 ﻿using CsvImporter.Core.Context;
+using CsvImporter.Core.Services.FileManager;
 using CsvImporter.Core.Services.Importer;
 using CsvImporter.Core.Services.Movement;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace CsvImporter.ConsoleApp
 
             services.AddSingleton<IMovementService, MovementService>();
             services.AddSingleton<IImporterService, CsvImporterService>();
+            services.AddSingleton<IFileManagerService, FileManagerService>();
 
             services.AddLogging(configure =>
             {
