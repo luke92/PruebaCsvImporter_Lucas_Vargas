@@ -66,7 +66,7 @@ namespace CsvImporter.Core.Services.Importer
             while (csv.Read())
             {
                 listRecords.Add(csv.GetRecord<StockMovement>());
-                if(listRecords.Count == 10000)
+                if(listRecords.Count == 100000)
                 {
                     await _movementService.SaveAsync(listRecords);
                     listRecords.Clear();

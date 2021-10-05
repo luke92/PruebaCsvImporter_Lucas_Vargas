@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using EFCore.BulkExtensions;
 
 namespace CsvImporter.Core.Services.Movement
 {
@@ -19,8 +20,7 @@ namespace CsvImporter.Core.Services.Movement
 
         public async Task SaveAsync(IList<StockMovement> stockMovements)
         {
-            await _db.StockMovements.AddRangeAsync(stockMovements);
-            await _db.SaveChangesAsync();
+            await _db.BulkInsertAsync(stockMovements);
         }
 
         public async Task SaveAsync(StockMovement stockMovement)
