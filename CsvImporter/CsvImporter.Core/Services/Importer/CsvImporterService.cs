@@ -11,6 +11,7 @@ using CsvImporter.Core.Services.Movement;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System;
+using Microsoft.Extensions.Configuration;
 
 namespace CsvImporter.Core.Services.Importer
 {
@@ -18,11 +19,17 @@ namespace CsvImporter.Core.Services.Importer
     {
         private readonly IMovementService _movementService;
         private readonly ILogger _logger;
+        private readonly int _batchSize = 100000;
 
-        public CsvImporterService(IMovementService movementService, ILogger<CsvImporterService> logger)
+        public CsvImporterService(IMovementService movementService, ILogger<CsvImporterService> logger, IConfiguration configuration)
         {
             _movementService = movementService;
             _logger = logger;
+
+            if(configuration != null)
+            {
+                int.TryParse(configuration.GetSection("BatchSize").Value, out _batchSize);
+            }
         }
 
         public async Task ImportStockAsync(string filePath, string delimiter = null)
@@ -63,12 +70,13 @@ namespace CsvImporter.Core.Services.Importer
             await _movementService.Clear();
 
             var listRecords = new List<StockMovement>();
+            
             while (csv.Read())
             {
                 listRecords.Add(csv.GetRecord<StockMovement>());
-                if(listRecords.Count == 100000)
+                if(listRecords.Count == _batchSize)
                 {
-                    await _movementService.SaveAsync(listRecords);
+                    await _movementService.SaveAsync(listRecords, _batchSize);
                     listRecords.Clear();
                 }
             }

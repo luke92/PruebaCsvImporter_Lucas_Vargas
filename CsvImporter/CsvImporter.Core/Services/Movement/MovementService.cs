@@ -18,11 +18,11 @@ namespace CsvImporter.Core.Services.Movement
             _db = db;
         }
 
-        public async Task SaveAsync(IList<StockMovement> stockMovements)
+        public async Task SaveAsync(IList<StockMovement> stockMovements, int? batchSize = null)
         {
             await _db.BulkInsertAsync(stockMovements, new BulkConfig
             {
-                BatchSize = 100000 
+                BatchSize = batchSize.HasValue ? batchSize.Value : 100000 
             });
         }
 

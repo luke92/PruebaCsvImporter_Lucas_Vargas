@@ -25,10 +25,9 @@ namespace CsvImporter.ConsoleApp
             IConfiguration configuration = builder.Build();
             services.AddSingleton(configuration);
 
-            var connectionString = configuration.GetSection("connectionString").Value;
             services.AddDbContext<StockContext>(options =>
             {
-                 options.UseSqlServer(connectionString);                
+                 options.UseSqlServer(configuration.GetConnectionString("StockDb"));                
             });
 
             services.AddSingleton<IMovementService, MovementService>();
