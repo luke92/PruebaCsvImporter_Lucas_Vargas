@@ -27,11 +27,11 @@ NET Core console program in C#, which reads a .csv file stored in an Azure stora
 
 ## Using Entity Framework Core
 
-| Method | CPU Usage | Memory Usage | Average # Records Inserted per second
-|--|--|--|--|
-| BulkInsert (SUPER FAST) | 20% | 82MB | 40891
-| Add Range | 25% | 1GB | 500
-| Add (ULTRA SLOW) | 33% | 40MB | 6
+| Method | CPU Usage | Memory Usage | Average # Records Inserted per second | Time Elapsed
+|--|--|--|--|--|
+| BulkInsert (SUPER FAST) | 20% | 82MB | 40891 | 7 Minutes
+| Add Range | 25% | 1GB | 500 | -
+| Add (ULTRA SLOW) | 33% | 40MB | 6 | -
 
 # Special Thanks
 - Repo: https://github.com/borisdj/EFCore.BulkExtensions
