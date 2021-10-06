@@ -1,7 +1,4 @@
-﻿using CsvHelper.Configuration.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace CsvImporter.Core.Domain
 {

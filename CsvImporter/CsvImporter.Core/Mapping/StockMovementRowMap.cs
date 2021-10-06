@@ -1,8 +1,5 @@
 ﻿using CsvHelper.Configuration;
 using CsvImporter.Core.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CsvImporter.Core.Mapping
 {

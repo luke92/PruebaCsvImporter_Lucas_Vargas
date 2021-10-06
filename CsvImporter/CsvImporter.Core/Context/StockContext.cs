@@ -1,9 +1,6 @@
 ﻿using CsvImporter.Core.Domain;
 using CsvImporter.Core.Mapping;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CsvImporter.Core.Context
 {

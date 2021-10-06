@@ -52,12 +52,6 @@ namespace CsvImporter.Core.Services.Importer
             var csv = new CsvReader(reader, config);
             csv.Context.RegisterClassMap<StockMovementRowMap>();
             
-            if (hasHeaderRecord && !Helpers.CSV.CSVHelper.CanReadHeader(csv))
-            {
-                _logger.LogError($"File {filePath} doesn't have content");
-                return;                
-            }
-            
             await _movementService.Clear();
 
             var listRecords = new List<StockMovement>();
@@ -69,7 +63,8 @@ namespace CsvImporter.Core.Services.Importer
                 try
                 {
                     var record = csv.GetRecord<StockMovement>();
-                    listRecords.Add(record);
+                    if(record != null)
+                        listRecords.Add(record);
                 }
                 catch(Exception ex)
                 {

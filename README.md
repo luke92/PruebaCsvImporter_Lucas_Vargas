@@ -13,8 +13,9 @@ NET Core console program in C#, which reads a .csv file stored in an Azure stora
 
 # How to Run
 - Configure your **appsettings.json** located in **CsvImporter.ConsoleApp**
-	- **connectionString** : Connection String of your database
-	- **dataSource** : Path of **Stock.CSV**
+	- **ConnectionStrings:StockDb** : Connection String of your database
+	- **DataSource:Path** : Path of **Stock.CSV** (Can be a local folder or URL from web)
+	- **DataSource:IsUrl** : Specify if the file is obtained from web or local
 - Set as StartUp Project and Use Package Manager Console Located in **CsvImporter.Core** and Run `Update-Database`
 - Run **CsvImporter.ConsoleApp**
 
