@@ -51,6 +51,10 @@ namespace CsvImporter.Core.Helpers.CSV
                         return false;
                     }
                 }
+                else
+                {
+                    return false;
+                }
             }
             catch
             {
