@@ -21,14 +21,31 @@ namespace CsvImporter.ConsoleApp
 
         public async Task RunAsync(String[] args)
         {
-            _logger.LogInformation($"Start importing at {DateTime.Now}");
-            var filepath = _configuration.GetSection("DataSource:Path").Value;
+            var path = "";
             var isFromWeb = false;
             var hasHeaderRecord = true;
-            bool.TryParse(_configuration.GetSection("DataSource:IsUrl").Value, out isFromWeb);
-            bool.TryParse(_configuration.GetSection("DataSource:HasHeaderRecord").Value, out hasHeaderRecord);
-            await _importerService.ImportStockAsync(filepath, isFromWeb, hasHeaderRecord);
-            _logger.LogInformation($"Finalize importing at {DateTime.Now}");
+            if (args.Length != 0 && args.Length != 3)
+            {
+                _logger.LogError("Need specify: [the path of .csv] [true or false if the path is from web] [true or false if the first record is the Header of CSV]");
+            }
+            else
+            {
+                if (args.Length == 0)
+                {
+                    path = _configuration.GetSection("DataSource:Path").Value;
+                    bool.TryParse(_configuration.GetSection("DataSource:IsUrl").Value, out isFromWeb);
+                    bool.TryParse(_configuration.GetSection("DataSource:HasHeaderRecord").Value, out hasHeaderRecord);
+                }
+                else
+                {
+                    path = args[0];
+                    bool.TryParse(args[1], out isFromWeb);
+                    bool.TryParse(args[2], out hasHeaderRecord);
+                }
+                _logger.LogInformation($"Start importing at {DateTime.Now}");
+                await _importerService.ImportStockAsync(path, isFromWeb, hasHeaderRecord);
+                _logger.LogInformation($"Finalize importing at {DateTime.Now}");
+            }          
         }
     }
 }

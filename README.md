@@ -19,7 +19,10 @@ NET Core console program in C#, which reads a .csv file stored in an Azure stora
 	- **DataSource:HasHeaderRecord** : Specify if the first row of CSV is the header with `true` or `false`
 - Set as StartUp Project and Use Package Manager Console Located in **CsvImporter.Core** and Run `Update-Database`
 - Run **CsvImporter.ConsoleApp**
-
+- Also you can run **CsvImporter.ConsoleApp** with 3 arguments
+	- 1) the path of .csv
+	- 2) `true` or `false` if the path is from web
+	- 3) `true` or `false` if the first record is the Header of CSV
 # Stock Entity
 | PointOfSale | Product | Date | Stock |
 |--|--|--|--|
