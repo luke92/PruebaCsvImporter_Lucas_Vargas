@@ -49,8 +49,14 @@ namespace CsvImporter.Core.Services.Importer
                 DetectDelimiter = true
             };
 
-            var csv = new CsvReader(reader, config);
-            csv.Context.RegisterClassMap<StockMovementRowMap>();
+            var csvReader = new CsvReader(reader, config);
+            csvReader.Context.RegisterClassMap<StockMovementRowMap>();
+
+            if (hasHeaderRecord)
+            {
+                csvReader.Read();
+                csvReader.ReadHeader();
+            }
             
             await _movementService.Clear();
 
@@ -58,11 +64,11 @@ namespace CsvImporter.Core.Services.Importer
             var recordsImported = (long)0;
             var recordsNotImported = (long)0;
 
-            while (csv.Read())
+            while (csvReader.Read())
             {
                 try
                 {
-                    var record = csv.GetRecord<StockMovement>();
+                    var record = csvReader.GetRecord<StockMovement>();
                     if(record != null)
                         listRecords.Add(record);
                 }
