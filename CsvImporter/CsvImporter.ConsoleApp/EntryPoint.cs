@@ -24,8 +24,12 @@ namespace CsvImporter.ConsoleApp
         public async Task RunAsync(String[] args)
         {
             _logger.LogInformation($"Start importing at {DateTime.Now}");
-            var dataSource = _configuration.GetSection("dataSource").Value;
-            await _importerService.ImportStockAsync(dataSource);
+            var filepath = _configuration.GetSection("dataSource:uri").Value;
+            var isFromWeb = false;
+            var hasHeaderRecord = true;
+            bool.TryParse(_configuration.GetSection("dataSource:isUrl").Value, out isFromWeb);
+            bool.TryParse(_configuration.GetSection("dataSource:hasHeaderRecord").Value, out hasHeaderRecord);
+            await _importerService.ImportStockAsync(filepath, isFromWeb, hasHeaderRecord);
             _logger.LogInformation($"Finalize importing at {DateTime.Now}");
         }
     }

@@ -52,7 +52,7 @@ namespace CsvImporter.Tests.Core.Services
         [Test]
         public void ImportStockWithoutErrorsWithZeroInserted()
         {
-            _fileManagerService.Setup(x => x.StreamReader(It.IsAny<string>())).Returns(new StreamReader(fakeMemoryStream));            
+            _fileManagerService.Setup(x => x.StreamReader(It.IsAny<string>(), false)).Returns(new StreamReader(fakeMemoryStream));            
             _importerService.ImportStockAsync(filePath);
             Assert.IsTrue(_logger.Invocations[0].Arguments[2].ToString().Contains("Records Imported: 0"));
         }
@@ -63,7 +63,7 @@ namespace CsvImporter.Tests.Core.Services
             var text = "PointOfSale;Product;Date;Stock" + "\r\n" + "121017;17240503103734;2019-08-17;2";
             var bytes = Encoding.UTF8.GetBytes(text);
             var stream = new MemoryStream(bytes);
-            _fileManagerService.Setup(x => x.StreamReader(It.IsAny<string>())).Returns(new StreamReader(stream));
+            _fileManagerService.Setup(x => x.StreamReader(It.IsAny<string>(), false)).Returns(new StreamReader(stream));
             _importerService.ImportStockAsync(filePath);
             Assert.IsTrue(_logger.Invocations[0].Arguments[2].ToString().Contains("Records Imported: 1"));
         }
@@ -74,7 +74,7 @@ namespace CsvImporter.Tests.Core.Services
             var text = "PointOfSale;Product;Date;Stock" + "\r\n" + "121017;17240503103734;2019-08-17;nosoyunnumero";
             var bytes = Encoding.UTF8.GetBytes(text);
             var stream = new MemoryStream(bytes);
-            _fileManagerService.Setup(x => x.StreamReader(It.IsAny<string>())).Returns(new StreamReader(stream));
+            _fileManagerService.Setup(x => x.StreamReader(It.IsAny<string>(), false)).Returns(new StreamReader(stream));
             _importerService.ImportStockAsync(filePath);
             Assert.IsTrue(_logger.Invocations[2].Arguments[2].ToString().Contains("Records Not Imported: 1"));
         }

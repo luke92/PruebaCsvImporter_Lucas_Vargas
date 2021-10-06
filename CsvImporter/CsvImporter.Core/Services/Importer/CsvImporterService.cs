@@ -1,8 +1,6 @@
 ﻿using CsvHelper;
 using System.Globalization;
-using System.IO;
 using System.Text;
-using System.Linq;
 using System.Collections.Generic;
 using CsvImporter.Core.Domain;
 using CsvHelper.Configuration;
@@ -35,9 +33,9 @@ namespace CsvImporter.Core.Services.Importer
             }
         }
 
-        public async Task ImportStockAsync(string filePath, bool hasHeaderRecord = true)
+        public async Task ImportStockAsync(string filePath, bool isUrl = false, bool hasHeaderRecord = true)
         {
-            var reader = _fileManagerService.StreamReader(filePath);
+            var reader = _fileManagerService.StreamReader(filePath, isUrl);
             if (reader == null) 
             {
                 _logger.LogError($"File {filePath} doesn't exists");
@@ -50,7 +48,7 @@ namespace CsvImporter.Core.Services.Importer
                 HasHeaderRecord = hasHeaderRecord,
                 DetectDelimiter = true
             };
-            
+
             var csv = new CsvReader(reader, config);
             csv.Context.RegisterClassMap<StockMovementRowMap>();
             
