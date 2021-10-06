@@ -23,6 +23,8 @@ NET Core console program in C#, which reads a .csv file stored in an Azure stora
 	- 1) the path of .csv
 	- 2) `true` or `false` if the path is from web
 	- 3) `true` or `false` if the first record is the Header of CSV
+	- Example Local File: `CsvImporter.ConsoleApp.exe "C:\stock2.csv" "false" "true"` 
+	- Example Web File: `CsvImporter.ConsoleApp.exe "https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV" "true" "true"`
 # Stock Entity
 | PointOfSale | Product | Date | Stock |
 |--|--|--|--|
